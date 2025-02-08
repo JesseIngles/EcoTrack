@@ -18,7 +18,7 @@ public class SustainableActionController : Controller
     _sustainable = sustainable;
   }
   [Authorize]
-  [HttpPost("/cadastrar")]
+  [HttpPost("cadastrar")]
   public DTO_Resposta Cadastrar(DTO_SustainableAction sustainableAction)
   {
     var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value; // Buscar pelo Subject do Token
@@ -33,7 +33,7 @@ public class SustainableActionController : Controller
   }
 
   [Authorize]
-  [HttpPut("/atualizar")]
+  [HttpPut("atualizar")]
   public DTO_Resposta Atualizar(Guid id, DTO_SustainableAction sustainableAction)
   {
     var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
@@ -48,13 +48,13 @@ public class SustainableActionController : Controller
   }
 
   [Authorize]
-  [HttpDelete("/eliminar/id")]
+  [HttpDelete("eliminar/id")]
   public DTO_Resposta Eliminar(Guid id)
   {
     return _sustainable.Eliminar(id);
   }
   [AllowAnonymous]
-  [HttpGet("/listar")]
+  [HttpGet("listar")]
   public DTO_Resposta Listar()
   {
     return _sustainable.Listar();
