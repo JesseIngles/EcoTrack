@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EcoTrack")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3fb78a40461175867efd19a9ac2d964740b29e89")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4bdd8750542b0673ab48ebe1d19cf7e50ca3c93c")]
 [assembly: System.Reflection.AssemblyProductAttribute("EcoTrack")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EcoTrack")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
