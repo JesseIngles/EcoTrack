@@ -19,31 +19,28 @@ public class SustainableActionController : Controller
   }
   [Authorize]
   [HttpPost("cadastrar")]
-  public DTO_Resposta Cadastrar(DTO_SustainableAction sustainableAction)
+  public DTO_Resposta Cadastrar(DTO_SustainableAction sustainableAction, Guid userId)
   {
-    var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value; // Buscar pelo Subject do Token
-
-    if (!Guid.TryParse(userIdClaim, out var userId))
+    var userIdClaim = User.FindFirst("id").Value; 
+    if (!Guid.TryParse(userIdClaim, out var UserId))
     {
       return new DTO_Resposta { mensagem = "Erro: usuário não autenticado ou token inválido" };
     }
 
-    sustainableAction.UserId = userId;
-    return _sustainable.Cadastrar(sustainableAction);
+    return _sustainable.Cadastrar(sustainableAction, userId);
   }
 
   [Authorize]
   [HttpPut("atualizar")]
   public DTO_Resposta Atualizar(Guid id, DTO_SustainableAction sustainableAction)
   {
-    var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
-
+    var userIdClaim = User.FindFirst("id").Value; 
+    
     if (!Guid.TryParse(userIdClaim, out var userId))
     {
       return new DTO_Resposta { mensagem = "Erro: usuário não autenticado ou token inválido" };
     }
 
-    sustainableAction.UserId = userId;
     return _sustainable.Atualizar(id, sustainableAction);
   }
 
@@ -51,6 +48,12 @@ public class SustainableActionController : Controller
   [HttpDelete("eliminar/id")]
   public DTO_Resposta Eliminar(Guid id)
   {
+    var userIdClaim = User.FindFirst("id").Value; 
+    
+    if (!Guid.TryParse(userIdClaim, out var userId))
+    {
+      return new DTO_Resposta { mensagem = "Erro: usuário não autenticado ou token inválido" };
+    } 
     return _sustainable.Eliminar(id);
   }
   [AllowAnonymous]

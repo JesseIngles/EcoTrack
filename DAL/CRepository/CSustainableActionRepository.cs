@@ -43,12 +43,12 @@ public class CSustainableActionRepository : ISustainableAction
     return resposta;
   }
 
-  public DTO_Resposta Cadastrar(DTO_SustainableAction sustainableAction)
+  public DTO_Resposta Cadastrar(DTO_SustainableAction sustainableAction, Guid userId)
   {
     DTO_Resposta resposta = new DTO_Resposta();
     try
     {
-      if (_db.Users.FirstOrDefault(x => x.Id == sustainableAction.UserId) == null)
+      if (_db.Users.FirstOrDefault(x => x.Id == userId) == null)
       {
         resposta.mensagem = "Dados inválidos";
         return resposta;
@@ -59,9 +59,8 @@ public class CSustainableActionRepository : ISustainableAction
         Points = sustainableAction.Points,
         Title = sustainableAction.Title,
         Description = sustainableAction.Description,
-        UserId = sustainableAction.UserId,
+        UserId = userId,
         Category = sustainableAction.Category,
-
       };
 
 

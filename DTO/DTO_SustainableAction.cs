@@ -14,6 +14,4 @@ public class DTO_SustainableAction
   public int Points { get; set; }
   [JsonIgnore]
   public DateTime CreatedAt { get; set; } = DateTime.UtcNow; 
-  [JsonIgnore]
-  public required Guid UserId { get; set; } 
 }
