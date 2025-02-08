@@ -84,6 +84,7 @@ app.UseHttpsRedirection();
 app.UseCors(
     cors => cors.AllowAnyOrigin().AllowCredentials().AllowAnyHeader().AllowAnyMethod()
 );
+
 app.UseAuthentication(); // Ativando autenticação
 app.UseAuthorization();  // Ativando autorização
 
