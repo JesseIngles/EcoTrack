@@ -82,7 +82,7 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 app.UseCors(
-    cors => cors.AllowAnyOrigin().AllowCredentials().AllowAnyHeader().AllowAnyMethod()
+    cors => cors.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
 );
 
 app.UseAuthentication(); // Ativando autenticação
