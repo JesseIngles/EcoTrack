@@ -48,7 +48,7 @@ public class CSustainableActionRepository : ISustainableAction
     DTO_Resposta resposta = new DTO_Resposta();
     try
     {
-      if (sustainableAction == null)
+      if (_db.Users.FirstOrDefault(x => x.Id == sustainableAction.UserId) == null)
       {
         resposta.mensagem = "Dados inválidos";
         return resposta;
@@ -64,12 +64,13 @@ public class CSustainableActionRepository : ISustainableAction
 
       };
 
+
       _db.SustainableActions.Add(SustainableAction);
       _db.SaveChanges();
 
       resposta.mensagem = $"Sucesso: {sustainableAction.Title} cadastrado com sucesso";
 
-    }
+    } 
     catch (Exception ex)
     {
       resposta.mensagem = ex.ToString();

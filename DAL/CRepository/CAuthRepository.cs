@@ -11,85 +11,91 @@ namespace EcoTrack.DAL.CRepository;
 
 public class CAuthRepository : IAuth
 {
-  private readonly AppDbContext _db;
-  public CAuthRepository(AppDbContext db)
-  {
-    _db = db;
-  }
-  private string GenerateJwtToken(User user)
+    private readonly AppDbContext _db;
+    private readonly string secretKey = "Tchilla".PadRight(32, '0'); // Garante que a chave seja igual
+
+    public CAuthRepository(AppDbContext db)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Tchilla".PadRight(128)));
+        _db = db;
+    }
+
+    private string GenerateJwtToken(User user)
+    {
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)); // Mesma chave
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var claims = new List<Claim>{
-          new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-          new Claim(JwtRegisteredClaimNames.Email, user.Email),
+
+        var claims = new List<Claim>
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new Claim("id", user.Id.ToString()),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email),
         };
+
         var token = new JwtSecurityToken(
             issuer: "CodePoint",
             audience: "CodePoint",
             claims: claims,
-            expires: DateTime.Now.AddMinutes(30),
+            expires: DateTime.UtcNow.AddMinutes(30), // Melhor usar UTC
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-  public DTO_Resposta Cadastrar(DTO_User novoUser)
-  {
-    DTO_Resposta resposta = new DTO_Resposta();
-    try
+    public DTO_Resposta Cadastrar(DTO_User novoUser)
     {
-      if (novoUser == null)
-      {
-        resposta.mensagem = "Dados inválidos";
+        DTO_Resposta resposta = new DTO_Resposta();
+        try
+        {
+            if (novoUser == null)
+            {
+                resposta.mensagem = "Dados inválidos";
+                return resposta;
+            }
+
+            User NovoUser = new User
+            {
+                Email = novoUser.Email,
+                Password = novoUser.Password
+            };
+
+            _db.Users.Add(NovoUser);
+            _db.SaveChanges();
+
+            resposta.mensagem = $"Sucesso: {novoUser.Email} cadastrado com sucesso";
+        }
+        catch (Exception ex)
+        {
+            resposta.mensagem = ex.ToString();
+        }
         return resposta;
-      }
-
-      User NovoUser = new User
-      {
-        Email = novoUser.Email,
-        Password = novoUser.Password
-      };
-
-      _db.Users.Add(NovoUser);
-      _db.SaveChanges();
-
-      resposta.mensagem = $"Sucesso: {novoUser.Email} cadastrado com sucesso";
-
     }
-    catch (Exception ex)
-    {
-      resposta.mensagem = ex.ToString();
-    }
-    return resposta;
-  }
 
-  public DTO_Resposta Logar(DTO_Login crendencias)
-  {
-    DTO_Resposta resposta = new DTO_Resposta();
-    try
+    public DTO_Resposta Logar(DTO_Login credenciais)
     {
-      if (crendencias == null)
-      {
-        resposta.mensagem = "Dados inválidos";
+        DTO_Resposta resposta = new DTO_Resposta();
+        try
+        {
+            if (credenciais == null)
+            {
+                resposta.mensagem = "Dados inválidos";
+                return resposta;
+            }
+
+            var userExistente = _db.Users.FirstOrDefault(x => x.Password == credenciais.Password && x.Email == credenciais.Email);
+
+            if (userExistente != null)
+            {
+                resposta.mensagem = $"Sucesso: {userExistente.Email} logado";
+                resposta.resposta = GenerateJwtToken(userExistente);
+                return resposta;
+            }
+
+            resposta.mensagem = "Credenciais inválidas";
+        }
+        catch (Exception ex)
+        {
+            resposta.mensagem = ex.ToString();
+        }
         return resposta;
-      }
-
-      var userExisitente = _db.Users.FirstOrDefault(x => x.Password == crendencias.Password && x.Email == crendencias.Email);
-
-      if (userExisitente != null)
-      {
-        resposta.mensagem = $"Sucesso: {userExisitente.Email} logado";
-        resposta.resposta = GenerateJwtToken(userExisitente);
-      }
-
-      resposta.mensagem = $"Credenciais inválidas";
-
     }
-    catch (Exception ex)
-    {
-      resposta.mensagem = ex.ToString();
-    }
-    return resposta;
-  }
 }
